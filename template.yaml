@@ -1,0 +1,158 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+
+Resources:
+  CargoOwnersApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+      Auth:
+        DefaultAuthorizer: MyCognitoAuthorizer
+        AddDefaultAuthorizerToCorsPreflight: False
+        Authorizers:
+          MyCognitoAuthorizer:
+            UserPoolArn: !GetAtt CargoOwnersCognitoUserPool.Arn
+
+  CargoOwnersAuthApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'*'"
+        AllowHeaders: "'*'"
+        AllowOrigin: "'*'"
+
+  Login:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs16.x
+      CodeUri: ./lambdas/login
+      Timeout: 30
+      MemorySize: 256
+      Environment:
+        Variables:
+          AWS_COGNITO_USER_POOL_ID: !Ref CargoOwnersCognitoUserPool
+          AWS_COGNITO_CLIENT_ID: !Ref CargoOwnersCognitoUserPoolClient
+          AWS_COGNITO_REGION: !Ref AWS::Region
+      Events:
+        Root:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CargoOwnersAuthApi
+            Method: POST
+            Path: "/login"
+
+  WriteTransportRate:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs16.x
+      CodeUri: ./lambdas/writeTransportRate
+      Events:
+        Root:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CargoOwnersApi
+            Method: POST
+            Path: /post-transporters-rates
+      Environment:
+        Variables:
+          TRANSPORTER_RATES_TABLE: !Ref TransportersRatesTable
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "dynamodb:PutItem"
+                - "dynamodb:DeleteItem"
+              Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TransportersRatesTable}
+
+  GetTransportersRates:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs16.x
+      CodeUri: ./lambdas/getTransportersRates
+      Events:
+        Root:
+          Type: Api
+          Properties:
+            RestApiId: !Ref CargoOwnersApi
+            Method: GET
+            Path: /get-transporters-rates
+      Environment:
+        Variables:
+          TRANSPORTER_RATES_TABLE: !Ref TransportersRatesTable
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - "dynamodb:GetItem"
+                - "dynamodb:Scan"
+              Resource: !Sub arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${TransportersRatesTable}
+
+  CargoOwnersCognitoUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: CognitoUserPoolName2
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+      UsernameAttributes:
+        - email
+      Schema:
+        - AttributeDataType: String
+          Name: email
+          Required: false
+
+  CargoOwnersCognitoUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref CargoOwnersCognitoUserPool
+      ClientName: CognitoUserPoolClientName2
+      GenerateSecret: false
+
+  TransportersRatesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: EmailForTransportDriver
+          AttributeType: S
+        - AttributeName: RouteHash
+          AttributeType: S
+      KeySchema:
+        - AttributeName: EmailForTransportDriver
+          KeyType: HASH
+        - AttributeName: RouteHash
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+
+  PublicS3BucketToHostFrontEnd:
+    Type: AWS::S3::Bucket
+    Properties:
+      MetricsConfigurations:
+        - Id: EntireBucket
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+  PublicS3BucketToHostFrontEndPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PublicS3BucketToHostFrontEnd
+      PolicyDocument:
+        Id: PublicReadPolicy
+        Version: 2012-10-17
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub arn:aws:s3:::${PublicS3BucketToHostFrontEnd}/*

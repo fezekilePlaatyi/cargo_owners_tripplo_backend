@@ -1,0 +1,123 @@
+{
+	"info": {
+		"_postman_id": "3b6c5666-dda9-49d2-8caa-ddf31d05996f",
+		"name": "Tripplo-task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"fezekileplaatyi@gmail.com\",\r\n    \"password\": \"Uminathi@2019\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://p1j20vsoa0.execute-api.us-east-1.amazonaws.com/Prod/login",
+					"protocol": "https",
+					"host": [
+						"p1j20vsoa0",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetTransactionRates",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJraWQiOiJIUTFnNkxabWwwYUFrODdwQ0ExNmt3eDlKZ2QwWUJweGl1cTVITFMycmNZPSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiI1Zjc3ZWNkYy0zODNjLTQzYWEtYTkxYi01M2MzMzE4NmI2ZTMiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLnVzLWVhc3QtMS5hbWF6b25hd3MuY29tXC91cy1lYXN0LTFfYzQ2d09OQVA0IiwicGhvbmVfbnVtYmVyX3ZlcmlmaWVkIjp0cnVlLCJjb2duaXRvOnVzZXJuYW1lIjoiNWY3N2VjZGMtMzgzYy00M2FhLWE5MWItNTNjMzMxODZiNmUzIiwib3JpZ2luX2p0aSI6ImIxNWE0YzdjLTc1MzYtNGU5MS1iMjMxLWMwNTg2MTBlNzQ2YiIsImF1ZCI6Im03NDZsNmMwNG0xYzVmaGlwbGJkYmljMyIsImV2ZW50X2lkIjoiOTgwNTRjNDYtZWE1OS00NGY1LWFiMjktNjU2YWQ0MTNiODY0IiwidG9rZW5fdXNlIjoiaWQiLCJhdXRoX3RpbWUiOjE2NTkyMTQ5NzUsInBob25lX251bWJlciI6IisyNzc4MDY4NzQ0NSIsImV4cCI6MTY1OTIxODU3NSwiaWF0IjoxNjU5MjE0OTc1LCJqdGkiOiJmOGI5MWQ3ZS1kYTAwLTRiYzgtOTk1OS1kMGI2ZWM5YzZkYzgiLCJlbWFpbCI6ImZlemVraWxlcGxhYXR5aUBnbWFpbC5jb20ifQ.DpREvknltwNmaif93E7aG8S8J_m6uxbMatSMSvlxVE6BUk79zfSyEAcoYwGTShtR0nf8p385LE6_SZc7YTUZSRYAD6xgBX5qAi2f8gkmaMauowowY9StpFgqJPsBkB7JTVO1Rk0XPqsHgPT4OYrbiwqPV7AlcTh8rHtjNVD1Fk4GhDzb5n6kgg7LvYRHBxiqonXGq6gwwDB0M0JCKlpZGBsbbD-g2X3k67Q7C2B35Y6DwDbKn7eHwBeh6iP4Lel7cAWEDZGtEHGXQPEO_tKmvQI2J08GUjOPvkn18ZazTHqd4LydL5tXTDPkoNre4HUN-GtAvQw_UG6dKYsXLJRBHQ",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rwan90ltq0.execute-api.us-east-1.amazonaws.com/Prod/get-transporters-rates",
+					"protocol": "https",
+					"host": [
+						"rwan90ltq0",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"get-transporters-rates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostTransactionRates",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "{{Token}}",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"someone@example.com\",\r\n    \"origin\": \"mthatha\",\r\n    \"destination\": \"midrand\",\r\n    \"transportRate\": \"3232.232\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://rwan90ltq0.execute-api.us-east-1.amazonaws.com/Prod/post-transporters-rates",
+					"protocol": "https",
+					"host": [
+						"rwan90ltq0",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"Prod",
+						"post-transporters-rates"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
