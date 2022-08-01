@@ -18,6 +18,9 @@ The lambda function are as follow:
 2. WriteTransportRate - Secured via Authorizer
 3. GetTransporterRates - Secured via Authorizer
 
+## Testing Lambda
+Each lambda function has its own test file from its root directory for local testing.
+
 ## Database
 The database is dynamoDB
 
